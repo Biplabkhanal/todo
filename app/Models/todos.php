@@ -8,7 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class todos extends Model
 {
     use HasFactory;
-    protected $table='todos';
-    protected $primary_key='id';
-}
+    protected $table = 'todos';
+    protected $primary_key = 'id';
 
+    protected $fillable = [
+        'name',
+        'work',
+        'duedate'
+    ];
+}
