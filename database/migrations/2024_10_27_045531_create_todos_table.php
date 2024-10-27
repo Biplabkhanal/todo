@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('work');
-            $table->string('duedate');
+            $table->string('due_date');
             $table->timestamps();
         });
     }

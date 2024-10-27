@@ -19,7 +19,8 @@
                     <label for="" class="form-label mt-4">Description</label>
                     <input type="text" name="work" class = "form-control" id="" value="{{ $todo->work }}">
                     <label for="" class="form-label mt-4">Due Date</label>
-                    <input type="date" name="duedate" class = "form-control" id="" value="{{ $todo->duedate }}">
+                    <input type="date" name="duedate" class = "form-control" id=""
+                        value="{{ $todo->due_date }}">
                     <button class="btn btn-primary btn-lg mt-4" type="submit">Update Todo</button>
                 </form>
             </div>

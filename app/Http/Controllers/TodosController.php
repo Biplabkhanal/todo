@@ -8,10 +8,17 @@ use App\Models\todos;
 
 class TodosController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $todos = todos::paginate(10); //fetch data from database
-        $data = compact('todos');  //create array
+        $search = $request->search ?? null;
+        $todos = todos::where(function ($query) use ($search) {
+            $query->where('name', 'like', "%$search%")
+                ->orWhere('work', 'like', "%$search%");
+        })->latest()->paginate(10);
+        $data = compact('todos');
+        if ($search) {
+            $data = array_merge($data, compact('search'));
+        }
         return view("welcome")->with($data);
     }
 
@@ -27,7 +34,11 @@ class TodosController extends Controller
 
     public function store(TodoRequest $request)
     {
-        todos::create($request->only(['name', 'work', 'duedate']));
+        todos::create([
+            'name' => $request->name,
+            'work' => $request->work,
+            'due_date' => $request->duedate
+        ]);
 
         return redirect(route("todo.index"));
     }
@@ -42,7 +53,11 @@ class TodosController extends Controller
     public function update(TodoRequest $request, $id)
     {
         $todo = todos::find($id);
-        $todo->update($request->only(['name', 'work', 'duedate']));
+        $todo->update([
+            'name' => $request->name,
+            'work' => $request->work,
+            'due_date' => $request->duedate
+        ]);
         return redirect()->route("todo.index");
     }
 

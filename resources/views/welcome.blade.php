@@ -11,6 +11,16 @@
             <a href="{{ route('todo.create') }}" class="btn btn-primary btn-lg">Add Todo</a>
         </div>
 
+        <div class="d-flex mb-4">
+            <form action="{{ route('todo.index') }}" method="get" class="d-flex w-100 gap-3">
+                <input type="text" class="form-control" name='search' value="{{ $search ?? '' }}" id="search"
+                    placeholder="Search todo by name">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+
+
+
         <div class="card">
             <div class="card-body">
                 <table class="table table-hover">
@@ -27,11 +37,15 @@
                             <tr valign="middle">
                                 <td>{{ $todo->name }}</td>
                                 <td>{{ $todo->work }}</td>
-                                <td>{{ \Carbon\Carbon::parse($todo->duedate)->format('d M Y') }}</td> <!-- Format date -->
+                                <td>{{ \Carbon\Carbon::parse($todo->due_date)->format('d M Y') }}</td> <!-- Format date -->
                                 <td>
                                     <a href="{{ route('todo.edit', $todo->id) }}" class="btn btn-warning btn-sm">Update</a>
-                                    <a href="{{ route('todo.destroy', $todo->id) }}" class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Are you sure you want to delete this todo?');">Delete</a>
+                                    <form action="{{ route('todo.destroy', $todo->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Are you sure you want to delete this todo?')">Delete</button>
+                                    </form>
                                 </td>
                             </tr>
                         @endforeach
