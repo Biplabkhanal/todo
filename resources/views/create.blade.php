@@ -11,7 +11,7 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('todo.store') }}" method="post">
+                <form action="{{ route('todo.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     <label for="" class="form-label mt-4">Task Name</label><!-- mt-4 = margin 4 -->
                     <input type="text" name="name" class = "form-control" id="">
@@ -31,6 +31,14 @@
                     <input type="date" name="duedate" class = "form-control" id="">
                     <div class="text-danger">
                         @error('duedate')
+                            {{ $message }}
+                        @enderror
+                    </div>
+
+                    <label for="" class="form-label mt-4">Upload Image</label>
+                    <input type="file" name="image" class="form-control" id="">
+                    <div class="text-danger">
+                        @error('image')
                             {{ $message }}
                         @enderror
                     </div>

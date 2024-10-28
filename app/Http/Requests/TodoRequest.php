@@ -24,7 +24,8 @@ class TodoRequest extends FormRequest
         return [
             'name' => 'required',
             'work' => 'required',
-            'duedate' => 'required'
+            'duedate' => 'required',
+            'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ];
     }
 }

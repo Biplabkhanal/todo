@@ -20,7 +20,10 @@
                     <input type="text" name="work" class = "form-control" id="" value="{{ $todo->work }}">
                     <label for="" class="form-label mt-4">Due Date</label>
                     <input type="date" name="duedate" class = "form-control" id=""
-                        value="{{ $todo->due_date }}">
+                        value="{{ $todo->duedate }}">
+                    {{-- <label for="" class="form-label mt-4">Upload Image</label>
+                    <input type="file" name="image" class = "form-control" id=""
+                        value="{{ $todo->image }}"> --}}
                     <button class="btn btn-primary btn-lg mt-4" type="submit">Update Todo</button>
                 </form>
             </div>

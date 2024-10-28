@@ -37,8 +37,14 @@ class TodosController extends Controller
         todos::create([
             'name' => $request->name,
             'work' => $request->work,
-            'due_date' => $request->duedate
+            'duedate' => $request->duedate
         ]);
+        if ($request->hasFile('image')) {
+            // Store the image and get the path
+            $path = $request->file('image')->store('images', 'public'); // Store the image in the 'public/images' directory
+            // die($path);
+
+        }
 
         return redirect(route("todo.index"));
     }
@@ -56,14 +62,24 @@ class TodosController extends Controller
         $todo->update([
             'name' => $request->name,
             'work' => $request->work,
-            'due_date' => $request->duedate
+            'duedate' => $request->duedate
         ]);
         return redirect()->route("todo.index");
     }
 
     public function destroy($id)
     {
+
+        // $todo = todos::find($id);
+
+        // if ($todo) {
+        //     $todo->delete(); // Delete the todo
+        // } else {
+        //     return redirect(route("todo.index"));
+        // }
         todos::find($id)->delete();
+
         return redirect(route("todo.index"));
     }
+
 }

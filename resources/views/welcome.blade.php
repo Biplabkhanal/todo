@@ -29,15 +29,24 @@
                             <th>Task Name</th>
                             <th>Description</th>
                             <th>Due Date</th>
+                            <th>Image</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($todos as $todo)
-                            <tr valign="middle">
+                            <tr valign="middle" >
                                 <td>{{ $todo->name }}</td>
                                 <td>{{ $todo->work }}</td>
-                                <td>{{ \Carbon\Carbon::parse($todo->due_date)->format('d M Y') }}</td> <!-- Format date -->
+                                <td>{{ \Carbon\Carbon::parse($todo->duedate)->format('d M Y') }}</td> <!-- Format date -->
+                                <td>
+                                    @if($todo->image)
+
+                                        <img src="{{ asset('storage/' . $todo->image->path) }}" alt="Image" width="100">
+                                    @else
+                                        No Image
+                                    @endif
+                                </td>
                                 <td>
                                     <a href="{{ route('todo.edit', $todo->id) }}" class="btn btn-warning btn-sm">Update</a>
                                     <form action="{{ route('todo.destroy', $todo->id) }}" method="POST" class="d-inline">
@@ -50,6 +59,7 @@
                             </tr>
                         @endforeach
                     </tbody>
+
                 </table>
 
                 {{ $todos->links() }}
