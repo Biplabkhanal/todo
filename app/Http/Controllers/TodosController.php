@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TodoRequest;
-use Illuminate\Http\Request;
 use App\Models\todos;
+use Illuminate\Http\Request;
+use App\Http\Requests\TodoRequest;
+use Storage;
 
 class TodosController extends Controller
 {
     public function index(Request $request)
     {
         $search = $request->search ?? null;
-        $todos = todos::where(function ($query) use ($search) {
+        $todos = todos::with('image')->where(function ($query) use ($search) {
             $query->where('name', 'like', "%$search%")
                 ->orWhere('work', 'like', "%$search%");
         })->latest()->paginate(10);
-
         $data = compact('todos');
         if ($search) {
             $data = array_merge($data, compact('search'));
@@ -35,18 +35,20 @@ class TodosController extends Controller
 
     public function store(TodoRequest $request)
     {
-        todos::create([
+        $todo = todos::create([
             'name' => $request->name,
             'work' => $request->work,
             'due_date' => $request->duedate
         ]);
+        $path = null;
         if ($request->hasFile('image')) {
-            // Store the image and get the path
-            $path = $request->file('image')->store('images', 'public'); // Store the image in the 'public/images' directory
-            // die($path);
-
+            $path = $request->file('image')->store('images', 'public');
         }
 
+        $todo->image()->create([
+            'todo_id' => $todo->id,
+            'path' => $path
+        ]);
         return redirect(route("todo.index"));
     }
 
@@ -71,15 +73,12 @@ class TodosController extends Controller
     public function destroy($id)
     {
 
-        // $todo = todos::find($id);
-
-        // if ($todo) {
-        //     $todo->delete(); // Delete the todo
-        // } else {
-        //     return redirect(route("todo.index"));
-        // }
-        todos::find($id)->delete();
-
+        $todo =  todos::with('image')->findOrFail($id);
+        $image_path = $todo->image->path;
+        if ($image_path) {
+            Storage::disk('public')->delete($image_path);
+        }
+        $todo->delete();
         return redirect(route("todo.index"));
     }
 }

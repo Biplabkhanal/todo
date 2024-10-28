@@ -35,14 +35,14 @@
                     </thead>
                     <tbody>
                         @foreach ($todos as $todo)
-                            <tr valign="middle" >
+                            <tr valign="middle">
                                 <td>{{ $todo->name }}</td>
                                 <td>{{ $todo->work }}</td>
                                 <td>{{ \Carbon\Carbon::parse($todo->duedate)->format('d M Y') }}</td> <!-- Format date -->
                                 <td>
-                                    @if($todo->image)
-
-                                        <img src="{{ asset('storage/' . $todo->image->path) }}" alt="Image" width="100">
+                                    @if ($todo->image)
+                                        <img src="{{ asset('storage/' . $todo->image->path) }}" alt="Image"
+                                            width="100">
                                     @else
                                         No Image
                                     @endif
