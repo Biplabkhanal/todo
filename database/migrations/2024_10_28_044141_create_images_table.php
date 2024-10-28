@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('images', function (Blueprint $table) {
             $table->id();
-            $table->string('path'); // Store the path to the image
             $table->foreignId('todo_id')->constrained()->onDelete('cascade');
+            $table->string('path'); // Store the path to the image
             $table->timestamps();
         });
     }

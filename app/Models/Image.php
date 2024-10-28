@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\todos;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Image extends Model
 {
@@ -13,8 +14,8 @@ class Image extends Model
 
     protected $fillable = ['path', 'todo_id'];
 
-    public function todo():BelongsTo
+    public function todo(): BelongsTo
     {
-        return $this->belongsTo(todos::class , 'todo_id' ,'id');
+        return $this->belongsTo(todos::class, 'todo_id', 'id');
     }
 }

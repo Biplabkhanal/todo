@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use App\Models\Image;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class todos extends Model
 {
@@ -14,11 +15,11 @@ class todos extends Model
     protected $fillable = [
         'name',
         'work',
-        'duedate'
+        'due_date'
     ];
 
-    public function image() :HasOne
+    public function image(): HasOne
     {
-        return $this->hasOne(Image::class ,'todo_id' ,'id');
+        return $this->hasOne(Image::class, 'todo_id', 'id');
     }
 }

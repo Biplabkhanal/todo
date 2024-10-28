@@ -15,6 +15,7 @@ class TodosController extends Controller
             $query->where('name', 'like', "%$search%")
                 ->orWhere('work', 'like', "%$search%");
         })->latest()->paginate(10);
+
         $data = compact('todos');
         if ($search) {
             $data = array_merge($data, compact('search'));
@@ -37,7 +38,7 @@ class TodosController extends Controller
         todos::create([
             'name' => $request->name,
             'work' => $request->work,
-            'duedate' => $request->duedate
+            'due_date' => $request->duedate
         ]);
         if ($request->hasFile('image')) {
             // Store the image and get the path
@@ -62,7 +63,7 @@ class TodosController extends Controller
         $todo->update([
             'name' => $request->name,
             'work' => $request->work,
-            'duedate' => $request->duedate
+            'due_date' => $request->duedate
         ]);
         return redirect()->route("todo.index");
     }
@@ -81,5 +82,4 @@ class TodosController extends Controller
 
         return redirect(route("todo.index"));
     }
-
 }
