@@ -19,8 +19,6 @@
             </form>
         </div>
 
-
-
         <div class="card">
             <div class="card-body">
                 <table class="table table-hover">
@@ -29,7 +27,6 @@
                             <th>Task Name</th>
                             <th>Description</th>
                             <th>Due Date</th>
-                            <th>Image</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -38,16 +35,12 @@
                             <tr valign="middle">
                                 <td>{{ $todo->name }}</td>
                                 <td>{{ $todo->work }}</td>
-                                <td>{{ \Carbon\Carbon::parse($todo->duedate)->format('d M Y') }}</td> <!-- Format date -->
+                                <td>{{ \Carbon\Carbon::parse($todo->duedate)->format('d M Y') }}</td>
                                 <td>
-                                    @if ($todo->image)
-                                        <img src="{{ asset('storage/' . $todo->image->path) }}" alt="Image"
-                                            width="100">
-                                    @else
-                                        No Image
-                                    @endif
-                                </td>
-                                <td>
+                                    {{-- <a href="{{ route('todo.show', $todo->id) }}" class="btn btn-info btn-sm">View</a> --}}
+                                    <form action="{{ route('todo.show', $todo->id) }}" method="GET" class="d-inline">
+                                        <button type="submit" class="btn btn-info btn-sm">View</button>
+                                    </form>
                                     <a href="{{ route('todo.edit', $todo->id) }}" class="btn btn-warning btn-sm">Update</a>
                                     <form action="{{ route('todo.destroy', $todo->id) }}" method="POST" class="d-inline">
                                         @csrf
@@ -59,11 +52,13 @@
                             </tr>
                         @endforeach
                     </tbody>
-
                 </table>
 
                 {{ $todos->links() }}
             </div>
         </div>
+        {{-- @include('show') --}}
+
+
     </div>
 @endsection

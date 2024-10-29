@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('todos', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('work');
-            $table->string('duedate');
-            $table->timestamps();
+        Schema::table('todos', function (Blueprint $table) {
+            $table->renameColumn('duedate', 'due_date');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('todos');
+        Schema::table('todos', function (Blueprint $table) {
+            $table->renameColumn('due_date', 'duedate');
+        });
     }
 };

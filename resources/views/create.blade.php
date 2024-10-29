@@ -36,9 +36,9 @@
                     </div>
 
                     <label for="" class="form-label mt-4">Upload Image</label>
-                    <input type="file" name="image" class="form-control" id="">
+                    <input type="file" name="image[]" class="form-control" id="image" multiple>
                     <div class="text-danger">
-                        @error('image')
+                        @error('image.*')
                             {{ $message }}
                         @enderror
                     </div>

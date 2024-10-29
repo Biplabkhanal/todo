@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\todos;
+use App\Models\Image;
 use Illuminate\Http\Request;
 use App\Http\Requests\TodoRequest;
 use Storage;
@@ -25,8 +26,10 @@ class TodosController extends Controller
 
     public function show($id)
     {
-        // return view('create');
+        $todo = todos::with('image')->findOrFail($id);
+        return view('show', compact('todo'));
     }
+
 
     public function create()
     {
@@ -35,20 +38,23 @@ class TodosController extends Controller
 
     public function store(TodoRequest $request)
     {
-        $todo = todos::create([
+        // dd($request);
+                $todo = todos::create([
             'name' => $request->name,
             'work' => $request->work,
             'due_date' => $request->duedate
         ]);
         $path = null;
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('images', 'public');
+        if ($request->image) {
+            foreach ($request->file('image') as $file){
+            $path = $file->store('images', 'public');
+            $todo->image()->create([
+                'todo_id'=>$todo->id,
+                'path' => $path
+            ]);
         }
+    }
 
-        $todo->image()->create([
-            'todo_id' => $todo->id,
-            'path' => $path
-        ]);
         return redirect(route("todo.index"));
     }
 
@@ -67,6 +73,23 @@ class TodosController extends Controller
             'work' => $request->work,
             'due_date' => $request->duedate
         ]);
+
+        foreach ($todo->image as $image) {
+            Storage::disk('public')->delete($image->path);
+            $image->delete();
+        }
+
+    if ($request->image) {
+        foreach ($request->file('image') as $file) {
+            $path = $file->store('images', 'public');
+            $todo->image()->create([
+                'todo_id' => $todo->id,
+                'path' => $path]
+            );
+        }
+    }
+
+
         return redirect()->route("todo.index");
     }
 
@@ -74,10 +97,11 @@ class TodosController extends Controller
     {
 
         $todo =  todos::with('image')->findOrFail($id);
-        $image_path = $todo->image->path;
-        if ($image_path) {
-            Storage::disk('public')->delete($image_path);
+        foreach ($todo->image as $image) {
+            Storage::disk('public')->delete($image->path);
+            $image->delete();
         }
+
         $todo->delete();
         return redirect(route("todo.index"));
     }
