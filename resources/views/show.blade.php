@@ -1,4 +1,4 @@
-@extends('layouts.main') <!-- Ensure this extends your main layout -->
+@extends('layouts.main')
 
 @section('main-section')
 <div class="container mt-5">
@@ -14,7 +14,7 @@
                     <strong>Images:</strong>
                     <div class="d-flex flex-wrap gap-3 mt-2">
                         @foreach ($todo->image as $image)
-                            <img src="{{ asset('storage/' . $image->path) }}" alt="Image" class="img-thumbnail" width="100">
+                        <img src="{{ Str::startsWith($image->path, 'https://') ? $image->path : asset('storage/' . $image->path) }}" alt="Image" class="img-thumbnail" width="100">
                         @endforeach
                     </div>
                 </div>

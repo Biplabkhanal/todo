@@ -5,9 +5,9 @@
 
 @section('main-section')
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center my-5"> <!-- Margin 5-->
+        <div class="d-flex justify-content-between align-items-center my-5">
             <div class="h2">Update Todo</div>
-            <a href="{{ route('todo.index') }}" class="btn btn-primary btn-lg">Back</a>
+            <a href="{{ route('todo.index') }}" class="btn btn-outline-primary btn-lg">Back</a>
         </div>
         <div class="card">
             <div class="card-body">
@@ -22,7 +22,6 @@
                     <input type="date" name="duedate" class = "form-control" id=""
                         value="{{ $todo->due_date }}">
 
-                    <!-- New File Upload Field -->
                     <label for="file" class="form-label mt-4">Upload Files</label>
                     <input type="file" name="image[]" class="form-control" id="" multiple>
 

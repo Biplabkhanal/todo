@@ -4,13 +4,13 @@
     <title>Todo List App</title>
 @endpush
 
+
 @section('main-section')
     <div class="container my-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>All Todos</h2>
             <a href="{{ route('todo.create') }}" class="btn btn-primary btn-lg">Add Todo</a>
         </div>
-
         <div class="d-flex mb-4">
             <form action="{{ route('todo.index') }}" method="get" class="d-flex w-100 gap-3">
                 <input type="text" class="form-control" name='search' value="{{ $search ?? '' }}" id="search"
@@ -24,6 +24,7 @@
                 <table class="table table-hover">
                     <thead class="table-dark">
                         <tr>
+                            <th>SN</th>
                             <th>Task Name</th>
                             <th>Description</th>
                             <th>Due Date</th>
@@ -33,11 +34,11 @@
                     <tbody>
                         @foreach ($todos as $todo)
                             <tr valign="middle">
+                                <td>{{ $loop->index + 1 }}</td>
                                 <td>{{ $todo->name }}</td>
                                 <td>{{ $todo->work }}</td>
                                 <td>{{ \Carbon\Carbon::parse($todo->duedate)->format('d M Y') }}</td>
                                 <td>
-                                    {{-- <a href="{{ route('todo.show', $todo->id) }}" class="btn btn-info btn-sm">View</a> --}}
                                     <form action="{{ route('todo.show', $todo->id) }}" method="GET" class="d-inline">
                                         <button type="submit" class="btn btn-info btn-sm">View</button>
                                     </form>
@@ -57,8 +58,32 @@
                 {{ $todos->links() }}
             </div>
         </div>
-        {{-- @include('show') --}}
 
+
+        <form action="{{ route('comments.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="mt-5">
+                <h3 class="mb-3">Add a Comment</h3>
+                <div class="mb-3">
+                    <textarea name="comment" class="form-control" rows="3" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="image" class="form-label">Attach an Image</label>
+                    <input type="file" name="image" class="form-control" id="image">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+
+        </form>
+
+        {{-- <div class="mt-3 d-flex justify-content-center">
+            <form action=" " method="GET" class="d-inline">
+                <button type="submit" class="btn btn-info btn-lg">View Comments</button>
+            </form>
+        </div> --}}
+        <div class="mt-3 d-flex justify-content-center">
+            <a href="{{ route('images.index') }}" class="btn btn-info btn-lg">View Images</a>
+        </div>
 
     </div>
 @endsection

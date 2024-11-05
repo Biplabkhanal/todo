@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\todos;
-use App\Models\Image;
-use Illuminate\Http\Request;
 use App\Http\Requests\TodoRequest;
-use Storage;
+use App\Models\Comment;
+use App\Models\Image;
+use App\Models\todos;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class TodosController extends Controller
 {
@@ -17,7 +18,8 @@ class TodosController extends Controller
             $query->where('name', 'like', "%$search%")
                 ->orWhere('work', 'like', "%$search%");
         })->latest()->paginate(10);
-        $data = compact('todos');
+        $comments = Comment::with('image')->get();
+        $data = compact('todos', 'comments');
         if ($search) {
             $data = array_merge($data, compact('search'));
         }
@@ -39,7 +41,7 @@ class TodosController extends Controller
     public function store(TodoRequest $request)
     {
         // dd($request);
-                $todo = todos::create([
+         $todo = todos::create([
             'name' => $request->name,
             'work' => $request->work,
             'due_date' => $request->duedate
@@ -49,7 +51,8 @@ class TodosController extends Controller
             foreach ($request->file('image') as $file){
             $path = $file->store('images', 'public');
             $todo->image()->create([
-                'todo_id'=>$todo->id,
+                'imageable_id'=>$todo->id,
+                'imageable_type'=>todos::class,
                 'path' => $path
             ]);
         }
@@ -83,7 +86,8 @@ class TodosController extends Controller
         foreach ($request->file('image') as $file) {
             $path = $file->store('images', 'public');
             $todo->image()->create([
-                'todo_id' => $todo->id,
+                'imageable_id'=>$todo->id,
+                'imageable_type'=>todos::class,
                 'path' => $path]
             );
         }
