@@ -18,6 +18,8 @@ class CommentController extends Controller
             $path = $request->file('image')->store('comment/images', 'public');
 
             $comment->image()->create([
+                'imageable_id' => $comment->id,
+                'imageable_type' => Comment::class,
                 'path' => $path
             ]);
         }
@@ -27,9 +29,10 @@ class CommentController extends Controller
 
     public function index()
     {
-        $comments = Comment::with('image')->latest()->paginate(10);
+        $comments = Comment::with('image')->get();
         return view('commentshow', compact('comments'));
     }
+
 }
 
 

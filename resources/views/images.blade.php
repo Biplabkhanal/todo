@@ -5,6 +5,7 @@
     <style>
         .gallery-image {
             cursor: pointer;
+            height: 100% !important;
         }
     </style>
 @endpush
@@ -14,23 +15,25 @@
         <h2 class="mb-4 text-center text-primary">All Images</h2>
 
         <div class="row">
-            @foreach ($todoImages as $image)
+            @foreach ($todos as $todo)
                 <div class="col-md-3 col-sm-4 mb-4 d-flex justify-content-center">
-                    <a href="{{ route('todo.show', $image->id) }}">
-                        <img src="{{ asset('storage/' . $image->path) }}" alt="Todo Image" class="img-thumbnail gallery-image">
+                    <a href="{{ route('todo.show', $todo->id) }}">
+                        <img src="{{ asset('storage/' . $todo->path) }}" alt="Todo Image" class="img-thumbnail gallery-image">
                     </a>
                 </div>
             @endforeach
 
-            @foreach ($commentImages as $image)
+            @foreach ($comments as $comment)
                 <div class="col-md-3 col-sm-4 mb-4 d-flex justify-content-center">
-                    <a href="{{ route('comments.index', $image->id) }}">
-                    <img src="{{ asset('storage/' . $image->path) }}" alt="Comment Image" class="img-thumbnail gallery-image">
+                    <a href="{{ route('comments.index', $comment->id) }}">
+                    <img src="{{ asset('storage/' . $comment->path) }}" alt="Comment Image" class="img-thumbnail gallery-image">
                     </a>
                 </div>
+
             @endforeach
 
         </div>
+
 
         <div class="text-center mt-4">
             <a href="{{ route('todo.index') }}" class="btn btn-outline-primary btn-lg">Back</a>

@@ -14,7 +14,7 @@
                     <div class="card p-4 mb-4">
                         <p class="mb-3"><strong>Comment:</strong> {{ $comment->comment }}</p>
 
-                        {{-- @if ($comment->image->isNotEmpty())
+                        @if ($comment->image->isNotEmpty())
                             <div class="mb-3">
                                 <strong>Images:</strong>
                                 <div class="d-flex flex-wrap gap-3 mt-2">
@@ -23,7 +23,7 @@
                                     @endforeach
                                 </div>
                             </div>
-                        @endif --}}
+                        @endif
 
 
                         <p class="text-muted mt-2">Posted on: {{ $comment->created_at->format('d M Y') }}</p>
@@ -31,7 +31,7 @@
                 @endforeach
 
                 <div class="text-center mt-4">
-                    <a href="{{ route('todo.index') }}" class="btn btn-outline-primary btn-lg">Back</a>
+                    <a href="{{ route('images.index') }}" class="btn btn-outline-primary btn-lg">Back</a>
                 </div>
             </div>
         </div>

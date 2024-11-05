@@ -11,9 +11,8 @@ class ImageController extends Controller
     public function index()
     {
 
-        $todoImages = todos::with('image')->get()->pluck('image')->flatten();
-        $commentImages = Comment::with('image')->get()->pluck('image')->flatten();
-
-        return view('images', compact('todoImages', 'commentImages'));
+        $todos = todos::with('image')->get()->pluck('image')->flatten();
+        $comments = Comment::with('image')->get()->pluck('image')->flatten();
+        return view('images', compact('todos', 'comments',));
     }
 }

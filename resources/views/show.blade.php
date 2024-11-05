@@ -1,5 +1,9 @@
 @extends('layouts.main')
 
+@push('head')
+    <title>Todo Details</title>
+@endpush
+
 @section('main-section')
 <div class="container mt-5">
     <h5 class="text-center mb-4">Details for <span class="text-primary">{{ $todo->name }}</span></h5>
