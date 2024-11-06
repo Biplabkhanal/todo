@@ -65,11 +65,17 @@
             <div class="mt-5">
                 <h3 class="mb-3">Add a Comment</h3>
                 <div class="mb-3">
-                    <textarea name="comment" class="form-control" rows="3" required></textarea>
+                    <textarea name="comment" class="form-control" rows="3"></textarea>
+                    @error('comment')
+                        <span class="text-danger">There must be some text in comment</span>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <label for="image" class="form-label">Attach an Image</label>
                     <input type="file" name="image" class="form-control" id="image">
+                    @error('image')
+                        <span class="text-danger">There must be some image in comment</span>
+                    @enderror
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>

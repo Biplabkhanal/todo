@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
+use App\Services\ImageServices\CheckTodoService;
+use App\Models\Image;
 use App\Models\todos;
 
 
@@ -10,9 +11,8 @@ class ImageController extends Controller
 {
     public function index()
     {
-
-        $todos = todos::with('image')->get()->pluck('image')->flatten();
-        $comments = Comment::with('image')->get()->pluck('image')->flatten();
-        return view('images', compact('todos', 'comments',));
+    $images=Image::with('imageable')->paginate(8);
+   $images= CheckTodoService::checkTodo($images);
+    return view('images',compact('images'));
     }
 }

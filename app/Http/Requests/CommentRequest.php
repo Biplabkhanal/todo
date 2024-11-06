@@ -22,10 +22,9 @@ class CommentRequest extends FormRequest
     public function rules(): array
     {
         // dd('hello');
-                return [
+        return [
             'comment' => 'required|string|max:255',
             'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-
         ];
     }
 }
