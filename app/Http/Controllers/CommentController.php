@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\CommentCreated;
 use App\Http\Requests\CommentRequest;
 use App\Models\Comment;
 use App\Models\Image;
@@ -34,6 +35,7 @@ class CommentController extends Controller
             DB::rollback();
             return redirect()->back()->with('error', 'Comment failed to add!');
         }
+        CommentCreated::dispatch($comment);
         return redirect()->back()->with('success', 'Comment added successfully!');
     }
 

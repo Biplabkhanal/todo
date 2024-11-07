@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\CommentCreated;
 use App\Models\Image;
 use App\Models\User;
 use App\Observers\CommentObserver;
