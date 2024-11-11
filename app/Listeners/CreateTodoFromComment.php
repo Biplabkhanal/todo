@@ -9,10 +9,9 @@ use App\Notifications\CommentNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
-class CreateTodoFromComment
-// implements ShouldQueue
+class CreateTodoFromComment implements ShouldQueue
 {
-    // use Queueable;
+    use Queueable;
     /**
      * Create the event listener.
      */

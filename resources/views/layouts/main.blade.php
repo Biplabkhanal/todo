@@ -16,22 +16,82 @@
 
     @vite('resources/js/app.js')
 
+
+
     @if (Auth::user())
         <script>
-            function fetchNotifications() {
-                fetch('/fetchNotifications')
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data.notifications, data.unread_count);
-                    })
-            }
+            const markAllReadRoute = "{{ route('notifications.markAllRead') }}";
+            const csrfToken = "{{ csrf_token() }}";
+            const readNotificationRoute =
+                "{{ route('notifications.read', ['notificationId' => 'PLACEHOLDER']) }}"; // Placeholder for notification ID
+            const userId = "{{ Auth::user()->id }}";
+
             document.addEventListener("DOMContentLoaded", function() {
-                window.Echo.channel('notification.' + {{ Auth::user()->id }})
-                    .listen('BroadcastNotificationEvent', (event) => {
-                        fetchNotifications();
-                    });
+                if (typeof Echo !== 'undefined') {
+                    Echo.channel('notification')
+                        .listen('BroadcastNotificationEvent', (event) => {
+                            fetchNotifications();
+                        });
+                }
                 fetchNotifications();
             });
+
+            function fetchNotifications() {
+                fetch('/fetchNotifications')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Fetched data:', data); // Log the fetched data
+                        const notificationsContainer = document.getElementById('notifications-container');
+                        notificationsContainer.innerHTML = '';
+                        const notificationCount = document.getElementById('notification-count');
+                        notificationCount.innerHTML = data.unread_count;
+
+                        if (data.unread_count > 0) {
+                            const markAllReadForm = `
+                        <form action="${markAllReadRoute}" method="POST">
+                            <input type="hidden" name="_token" value="${csrfToken}">
+                            <button type="submit" class="btn btn-success" style="font-size: 0.6rem;">
+                                Mark all as read
+                            </button>
+                        </form>
+                        <hr style="margin: 6px">
+                    `;
+                            notificationsContainer.innerHTML += markAllReadForm;
+                        }
+
+                        if (data.notifications.length === 0) {
+                            notificationsContainer.innerHTML += '<p>No notifications.</p>';
+                        } else {
+                            data.notifications?.data.forEach(notification => {
+                                const notificationHtml = `
+                            <div id="notification-${notification.id}">
+                                <p style="margin-bottom: 0px">
+                                    Comment submitted by
+                                    <strong>${notification.data.comment_user}</strong>:
+                                    ${notification.data.comment_text}
+                                </p>
+                                <small>At: ${notification.created_at}</small>
+                                ${notification.read_at === null ? `
+                                                                                                                                                                                                                                                                                                                                                                                    <a href="${readNotificationRoute.replace('PLACEHOLDER', notification.id)}" class="btn btn-success" style="font-size: 0.6rem">
+                                                                                                                                                                                                                                                                                                                                                                                        Read
+                                                                                                                                                                                                                                                                                                                                                                                    </a>
+                                                                                                                                                                                                                                                                                                                                                                                ` : ''}
+                            </div>
+                            <hr style="margin: 6px">
+                        `;
+                                notificationsContainer.innerHTML += notificationHtml;
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error); // Log any fetch errors
+                    });
+            }
         </script>
     @endif
 
@@ -95,13 +155,14 @@
                                 data-bs-target="#notificationModal">
                                 <i class="bi bi-bell"></i>
                                 @auth
-                                    @if (auth()->user()->unreadNotifications->count() > 0)
-                                        <span
-                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                            {{ auth()->user()->unreadNotifications->count() }}
-                                            <span class="visually-hidden">unread notifications</span>
-                                        </span>
-                                    @endif
+                                    {{-- @if (auth()->user()->unreadNotifications->count() > 0) --}}
+                                    <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                        id="notification-count">
+                                        {{ auth()->user()->unreadNotifications->count() }}
+                                        <span class="visually-hidden">unread notifications</span>
+                                    </span>
+                                    {{-- @endif --}}
                                 @endauth
                             </a>
                         </li>
@@ -118,50 +179,9 @@
                                     </div>
                                     <div class="modal-body">
                                         @auth
-                                            @if (auth()->user()->notifications->isEmpty())
-                                                <p>No notifications.</p>
-                                            @else
-                                                @if (auth()->user()->unreadNotifications->count() > 0)
-                                                    <form action="{{ route('notifications.markAllRead') }}" method="POST">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-success"
-                                                            style="font-size: 0.6rem;">
-                                                            Mark all as read
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                                <hr style="margin: 6px">
-
-                                                @foreach (auth()->user()->unreadNotifications as $notification)
-                                                    <div id="notifications">
-                                                        <p style="margin-bottom: 0px">
-                                                            Comment submitted by
-                                                            <strong>{{ $notification->data['comment_user'] }}</strong>:
-                                                            {{ $notification->data['comment_text'] }}
-                                                        </p>
-                                                        <small>At: {{ $notification->created_at }}</small>
-
-                                                        <a href="{{ route('notifications.read', $notification->id) }}"
-                                                            class="btn btn-success" style="font-size: 0.6rem">
-                                                            Read
-                                                        </a>
-                                                    </div>
-                                                    <hr style="margin: 6px">
-                                                @endforeach
-
-
-                                                @foreach (auth()->user()->readNotifications as $notification)
-                                                    <div>
-                                                        <p style="margin-bottom: 0px">
-                                                            Comment submitted by
-                                                            <strong>{{ $notification->data['comment_user'] }}</strong>:
-                                                            {{ $notification->data['comment_text'] }}
-                                                        </p>
-                                                        <small>At: {{ $notification->created_at }}</small>
-                                                    </div>
-                                                    <hr style="margin: 6px">
-                                                @endforeach
-                                            @endif
+                                            <div id="notifications-container">
+                                                <!-- Notifications will be populated here by JavaScript -->
+                                            </div>
                                         @endauth
                                     </div>
 
