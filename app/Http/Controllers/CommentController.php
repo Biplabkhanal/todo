@@ -6,10 +6,12 @@ use App\Events\CommentCreated;
 use App\Http\Requests\CommentRequest;
 use App\Models\Comment;
 use App\Models\Image;
+use App\Models\User;
+use App\Notifications\CommentNotification;
 use Auth;
+use DB;
 use Exception;
 use Illuminate\Support\Facades\Request;
-use DB;
 
 class CommentController extends Controller
 {
@@ -36,6 +38,10 @@ class CommentController extends Controller
             return redirect()->back()->with('error', 'Comment failed to add!');
         }
         CommentCreated::dispatch($comment);
+        $users = User::where('id', '!=', $comment->user_id)->get();
+        foreach ($users as $user) {
+            $user->notify(new CommentNotification($comment));
+        }
         return redirect()->back()->with('success', 'Comment added successfully!');
     }
 

@@ -1,27 +1,58 @@
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @stack('head') <!--this helps to create a stack-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  </head>
-  <body>
-    <div >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css">
+    <!-- Bootstrap Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
+    </script>
+
+    @vite('resources/js/app.js')
+
+    @if (Auth::user())
+        <script>
+            function fetchNotifications() {
+                fetch('/fetchNotifications')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data.notifications, data.unread_count);
+                    })
+            }
+            document.addEventListener("DOMContentLoaded", function() {
+                window.Echo.channel('notification.' + {{ Auth::user()->id }})
+                    .listen('BroadcastNotificationEvent', (event) => {
+                        fetchNotifications();
+                    });
+                fetchNotifications();
+            });
+        </script>
+    @endif
+
+</head>
+
+<body>
+    <div>
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -41,14 +72,14 @@
                             @endif
                         @else
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
+                                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                    <a class="dropdown-item" href="{{ route('logout') }} "
+                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
 
@@ -58,16 +89,96 @@
                                 </div>
                             </li>
                         @endguest
+                        <!-- Notification Icon -->
+                        <li class="nav-item">
+                            <a class="nav-link position-relative" href="#" data-bs-toggle="modal"
+                                data-bs-target="#notificationModal">
+                                <i class="bi bi-bell"></i>
+                                @auth
+                                    @if (auth()->user()->unreadNotifications->count() > 0)
+                                        <span
+                                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                            {{ auth()->user()->unreadNotifications->count() }}
+                                            <span class="visually-hidden">unread notifications</span>
+                                        </span>
+                                    @endif
+                                @endauth
+                            </a>
+                        </li>
+
+                        <!-- Modal for Notifications -->
+                        <div class="modal fade" id="notificationModal" tabindex="-1"
+                            aria-labelledby="notificationModalLabel" aria-hidden="true">
+                            <div class="modal-dialog position-absolute" style="top: 30px; right: 1%;">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="notificationModalLabel">Notifications</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        @auth
+                                            @if (auth()->user()->notifications->isEmpty())
+                                                <p>No notifications.</p>
+                                            @else
+                                                @if (auth()->user()->unreadNotifications->count() > 0)
+                                                    <form action="{{ route('notifications.markAllRead') }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-success"
+                                                            style="font-size: 0.6rem;">
+                                                            Mark all as read
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                                <hr style="margin: 6px">
+
+                                                @foreach (auth()->user()->unreadNotifications as $notification)
+                                                    <div id="notifications">
+                                                        <p style="margin-bottom: 0px">
+                                                            Comment submitted by
+                                                            <strong>{{ $notification->data['comment_user'] }}</strong>:
+                                                            {{ $notification->data['comment_text'] }}
+                                                        </p>
+                                                        <small>At: {{ $notification->created_at }}</small>
+
+                                                        <a href="{{ route('notifications.read', $notification->id) }}"
+                                                            class="btn btn-success" style="font-size: 0.6rem">
+                                                            Read
+                                                        </a>
+                                                    </div>
+                                                    <hr style="margin: 6px">
+                                                @endforeach
+
+
+                                                @foreach (auth()->user()->readNotifications as $notification)
+                                                    <div>
+                                                        <p style="margin-bottom: 0px">
+                                                            Comment submitted by
+                                                            <strong>{{ $notification->data['comment_user'] }}</strong>:
+                                                            {{ $notification->data['comment_text'] }}
+                                                        </p>
+                                                        <small>At: {{ $notification->created_at }}</small>
+                                                    </div>
+                                                    <hr style="margin: 6px">
+                                                @endforeach
+                                            @endif
+                                        @endauth
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
                     </ul>
                 </div>
             </div>
         </nav>
-        <div class="container py-3"> <!-- container with padding 3 -->
-            <div class=" align-items-center d-flex justify-content-center">
+        <div class="container py-3">
+            <div class="align-items-center d-flex justify-content-center">
                 @yield('main-section')
             </div>
         </div>
     </div>
-    {{-- @yield('main-section') --}}
-  </body>
+</body>
+
 </html>
