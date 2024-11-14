@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\NotificationController;
@@ -24,4 +25,12 @@ Route::post('/notifications/mark-all-read', [NotificationController::class, 'mar
 
 Route::middleware("auth")->controller(NotificationController::class)->group(function () {
     Route::get('/fetchNotifications', 'fetchNotifications');
+});
+
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/chat/messages/{recipientId}', [ChatController::class, 'fetchMessages']);
+    Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
 });

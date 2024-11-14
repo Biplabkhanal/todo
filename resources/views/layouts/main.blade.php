@@ -76,11 +76,12 @@
                                     ${notification.data.comment_text}
                                 </p>
                                 <small>At: ${notification.created_at}</small>
+
                                 ${notification.read_at === null ? `
-                                                                                                                                                                                                                                                                                                                                                                                    <a href="${readNotificationRoute.replace('PLACEHOLDER', notification.id)}" class="btn btn-success" style="font-size: 0.6rem">
-                                                                                                                                                                                                                                                                                                                                                                                        Read
-                                                                                                                                                                                                                                                                                                                                                                                    </a>
-                                                                                                                                                                                                                                                                                                                                                                                ` : ''}
+                                                                                                                                                                                                <a href="${readNotificationRoute.replace('PLACEHOLDER', notification.id)}" class="btn btn-success" style="font-size: 0.6rem">
+                                                                                                                                                                                                        Read
+                                                                                                                                                                                                 </a>
+                                                                                                                                                                                         ` : ''}
                             </div>
                             <hr style="margin: 6px">
                         `;
@@ -132,14 +133,16 @@
                             @endif
                         @else
                             <li class="nav-item dropdown">
+
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }} "
-                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                        onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
 
@@ -180,7 +183,6 @@
                                     <div class="modal-body">
                                         @auth
                                             <div id="notifications-container">
-                                                <!-- Notifications will be populated here by JavaScript -->
                                             </div>
                                         @endauth
                                     </div>
@@ -188,6 +190,20 @@
                                 </div>
                             </div>
                         </div>
+
+                        <li class="nav-item">
+                            @auth
+                                <a class="nav-link position-relative" href="{{ route('chat.index') }}">
+                                    <i class="bi bi-messenger"></i>
+                                    <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                        id="message-count">
+                                        0
+                                        <span class="visually-hidden">unread messages</span>
+                                    </span>
+                                </a>
+                            @endauth
+                        </li>
 
                     </ul>
                 </div>
