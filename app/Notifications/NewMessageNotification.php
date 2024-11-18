@@ -17,7 +17,7 @@ class NewMessageNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(Message $message)
+    public function __construct($message)
     {
         $this->message = $message;
     }

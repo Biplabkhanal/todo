@@ -78,10 +78,10 @@
                                 <small>At: ${notification.created_at}</small>
 
                                 ${notification.read_at === null ? `
-                                                                                                                                                                                                <a href="${readNotificationRoute.replace('PLACEHOLDER', notification.id)}" class="btn btn-success" style="font-size: 0.6rem">
-                                                                                                                                                                                                        Read
-                                                                                                                                                                                                 </a>
-                                                                                                                                                                                         ` : ''}
+                                                                                                                                                                                                        <a href="${readNotificationRoute.replace('PLACEHOLDER', notification.id)}" class="btn btn-success" style="font-size: 0.6rem">
+                                                                                                                                                                                                                Read
+                                                                                                                                                                                                         </a>
+                                                                                                                                                                                                 ` : ''}
                             </div>
                             <hr style="margin: 6px">
                         `;
@@ -90,7 +90,7 @@
                         }
                     })
                     .catch(error => {
-                        console.error('Fetch error:', error); // Log any fetch errors
+                        console.error('Fetch error:', error);
                     });
             }
         </script>

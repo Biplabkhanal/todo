@@ -33,4 +33,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/messages/{recipientId}', [ChatController::class, 'fetchMessages']);
     Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
     Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::post('/chat/typing-status', [ChatController::class, 'typingStatus'])->name('chat.typingStatus');
+    Route::post('/chat/send-status', [ChatController::class, 'sendStatus'])->name('chat.sendStatus');
 });

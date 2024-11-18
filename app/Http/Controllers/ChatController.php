@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageDeliveredEvent;
 use App\Events\MessageSentEvent;
+use App\Events\MessageTypingEvent;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Message;
@@ -44,8 +46,24 @@ class ChatController extends Controller
             'content' => $request->message
         ]);
 
-        broadcast(new MessageSentEvent($message));
-
+        MessageSentEvent::dispatch($message);
+        $this->sendStatus($message);
         return response()->json($message);
+    }
+
+    public function typingStatus(Request $request)
+    {
+        $senderId = Auth::id();
+        $recipientId = $request->recipient_id;
+        $isTyping = $request->is_typing;
+        MessageTypingEvent::dispatch($senderId, $recipientId, $isTyping);
+        return response()->json(['status' => 'Typing event broadcasted']);
+    }
+
+    public static function sendStatus($message)
+    {
+        $message->update(['status' => 'delivered']);
+        MessageDeliveredEvent::dispatch($message->id, 'delivered', auth()->id());
+        return;
     }
 }

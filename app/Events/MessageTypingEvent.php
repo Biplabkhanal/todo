@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\Message;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,19 +10,21 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSentEvent implements ShouldBroadcast
+class MessageTypingEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $message;
-    public $rid;
+    public $isTyping;
+    public $senderId;
+    public $recipientId;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($message)
+    public function __construct($senderId, $recipientId, $isTyping)
     {
-        $this->message = $message;
-        $this->rid = $message->recipient_id;
+        $this->isTyping = $isTyping;
+        $this->senderId = $senderId;
+        $this->recipientId = $recipientId;
     }
 
     /**
@@ -33,6 +34,11 @@ class MessageSentEvent implements ShouldBroadcast
      */
     public function broadcastOn(): PrivateChannel
     {
-        return new PrivateChannel('chat.' . $this->rid);
+        return
+            new PrivateChannel('type.' . $this->recipientId);
+    }
+    public function broadcastAs()
+    {
+        return 'user.typing';
     }
 }
